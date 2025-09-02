@@ -43,7 +43,7 @@ graph TD
 
 *   **Features**:
     *   URL input via command-line argument.
-    *   Basic filtering using a local `blacklist.toml` file.
+    *   Basic filtering using a local `blacklist.toml` file or a dynamic link to txt 'https://nsfw.oisd.nl' which updates daily.
     *   Simple progress bar in the terminal.
 *   **Tech Stack**: Typer (or Click), `uv`, `rich` (for nice terminal UI).
 *   **Success Criteria**: A user can run `python -m dlp_gui.cli https://some.url` and have it download successfully, or be blocked by the filter.
