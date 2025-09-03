@@ -47,31 +47,43 @@ class YTDLPConfig:
         config = copy.deepcopy(self.base_options)
 
         if format_type == self.FORMAT_PRESETS["BEST_VIDEO_AUDIO"]:
-            config.update({"format": "best[height<=1080]", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("best[height<=1080]"))
 
         elif format_type == self.FORMAT_PRESETS["BEST_VIDEO_ONLY"]:
-            config.update({"format": "bestvideo[height<=1080]", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("bestvideo[height<=1080]"))
 
         elif format_type == self.FORMAT_PRESETS["BEST_AUDIO_ONLY"]:
             config.update(self._get_audio_config(codec="mp3", quality="192"))
 
         elif format_type == self.FORMAT_PRESETS["VIDEO_720P"]:
-            config.update({"format": "best[height<=720]", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("best[height<=720]"))
 
         elif format_type == self.FORMAT_PRESETS["VIDEO_480P"]:
-            config.update({"format": "best[height<=480]", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("best[height<=480]"))
 
         elif format_type == self.FORMAT_PRESETS["MP3_AUDIO"]:
             config.update(self._get_audio_config(codec="mp3", quality="320"))
 
         elif format_type == self.FORMAT_PRESETS["CUSTOM"]:
-            config.update({"format": "best", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("best"))
 
         else:
             logger.warning(f"Unknown format type: {format_type}, falling back to 'best'")
-            config.update({"format": "best", "merge_output_format": "mp4"})
+            config.update(self._get_h264_video_config("best"))
 
         return config
+    def _get_h264_video_config(self, format_string: str) -> Dict[str, Any]:
+        """Internal helper for video configs with H.264 encoding."""
+        return {
+            "format": format_string,
+            "merge_output_format": "mp4",
+            "postprocessors": [
+                {
+                    "key": "FFmpegVideoConvertor",
+                    "preferedformat": "mp4",
+                }
+            ],
+        }
 
     # ----------------------
     # Extended Configs
