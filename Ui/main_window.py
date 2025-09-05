@@ -337,277 +337,277 @@ class CustomRulesDialog(QDialog):
             self._load_rules()
 
 
-class SettingsDialog(QDialog):
-    """Settings dialog for application configuration."""
+# class SettingsDialog(QDialog):
+#     """Settings dialog for application configuration."""
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Settings")
-        self.setModal(True)
-        self.setMinimumSize(600, 500)
-        self.settings = QSettings()
-        self._init_ui()
-        self._load_settings()
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.setWindowTitle("Settings")
+#         self.setModal(True)
+#         self.setMinimumSize(600, 500)
+#         self.settings = QSettings()
+#         self._init_ui()
+#         self._load_settings()
 
-    def _init_ui(self):
-        layout = QVBoxLayout(self)
+#     def _init_ui(self):
+#         layout = QVBoxLayout(self)
 
-        # Create tabs
-        tab_widget = QTabWidget()
+#         # Create tabs
+#         tab_widget = QTabWidget()
 
-        # General tab
-        general_tab = self._create_general_tab()
-        tab_widget.addTab(general_tab, "General")
+#         # General tab
+#         general_tab = self._create_general_tab()
+#         tab_widget.addTab(general_tab, "General")
 
-        # Download tab
-        download_tab = self._create_download_tab()
-        tab_widget.addTab(download_tab, "Downloads")
+#         # Download tab
+#         download_tab = self._create_download_tab()
+#         tab_widget.addTab(download_tab, "Downloads")
 
-        # Blocking tab
-        blocking_tab = self._create_blocking_tab()
-        tab_widget.addTab(blocking_tab, "Content Filter")
+#         # Blocking tab
+#         blocking_tab = self._create_blocking_tab()
+#         tab_widget.addTab(blocking_tab, "Content Filter")
 
-        # Advanced tab
-        advanced_tab = self._create_advanced_tab()
-        tab_widget.addTab(advanced_tab, "Advanced")
+#         # Advanced tab
+#         advanced_tab = self._create_advanced_tab()
+#         tab_widget.addTab(advanced_tab, "Advanced")
 
-        layout.addWidget(tab_widget)
+#         layout.addWidget(tab_widget)
 
-        # Buttons
-        button_box = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok |
-            QDialogButtonBox.StandardButton.Cancel |
-            QDialogButtonBox.StandardButton.Apply
-        )
-        button_box.accepted.connect(self._save_and_close)
-        button_box.rejected.connect(self.reject)
-        button_box.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self._save_settings)
+#         # Buttons
+#         button_box = QDialogButtonBox(
+#             QDialogButtonBox.StandardButton.Ok |
+#             QDialogButtonBox.StandardButton.Cancel |
+#             QDialogButtonBox.StandardButton.Apply
+#         )
+#         button_box.accepted.connect(self._save_and_close)
+#         button_box.rejected.connect(self.reject)
+#         button_box.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self._save_settings)
 
-        layout.addWidget(button_box)
+#         layout.addWidget(button_box)
 
-    def _create_general_tab(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+#     def _create_general_tab(self) -> QWidget:
+#         widget = QWidget()
+#         layout = QVBoxLayout(widget)
 
-        # Theme settings
-        theme_group = QGroupBox("Appearance")
-        theme_layout = QFormLayout(theme_group)
+#         # Theme settings
+#         theme_group = QGroupBox("Appearance")
+#         theme_layout = QFormLayout(theme_group)
 
-        self.theme_combo = QComboBox()
-        self.theme_combo.addItems(["dark", "light", "auto"])
-        theme_layout.addRow("Theme:", self.theme_combo)
+#         self.theme_combo = QComboBox()
+#         self.theme_combo.addItems(["dark", "light", "auto"])
+#         theme_layout.addRow("Theme:", self.theme_combo)
 
-        self.window_size_combo = QComboBox()
-        self.window_size_combo.addItems(["960x640", "1200x800", "1440x900"])
-        theme_layout.addRow("Window Size:", self.window_size_combo)
+#         self.window_size_combo = QComboBox()
+#         self.window_size_combo.addItems(["960x640", "1200x800", "1440x900"])
+#         theme_layout.addRow("Window Size:", self.window_size_combo)
 
-        layout.addWidget(theme_group)
+#         layout.addWidget(theme_group)
 
-        # Startup settings
-        startup_group = QGroupBox("Startup")
-        startup_layout = QFormLayout(startup_group)
+#         # Startup settings
+#         startup_group = QGroupBox("Startup")
+#         startup_layout = QFormLayout(startup_group)
 
-        self.restore_session_check = QCheckBox("Restore previous session")
-        self.minimize_to_tray_check = QCheckBox("Minimize to system tray")
+#         self.restore_session_check = QCheckBox("Restore previous session")
+#         self.minimize_to_tray_check = QCheckBox("Minimize to system tray")
 
-        startup_layout.addRow(self.restore_session_check)
-        startup_layout.addRow(self.minimize_to_tray_check)
+#         startup_layout.addRow(self.restore_session_check)
+#         startup_layout.addRow(self.minimize_to_tray_check)
 
-        layout.addWidget(startup_group)
+#         layout.addWidget(startup_group)
 
-        layout.addStretch()
-        return widget
+#         layout.addStretch()
+#         return widget
 
-    def _create_download_tab(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+#     def _create_download_tab(self) -> QWidget:
+#         widget = QWidget()
+#         layout = QVBoxLayout(widget)
 
-        # Download settings
-        download_group = QGroupBox("Download Behavior")
-        download_layout = QFormLayout(download_group)
+#         # Download settings
+#         download_group = QGroupBox("Download Behavior")
+#         download_layout = QFormLayout(download_group)
 
-        self.max_concurrent_spinbox = QSpinBox()
-        self.max_concurrent_spinbox.setRange(1, 10)
-        self.max_concurrent_spinbox.setValue(3)
-        download_layout.addRow("Max Concurrent Downloads:", self.max_concurrent_spinbox)
+#         self.max_concurrent_spinbox = QSpinBox()
+#         self.max_concurrent_spinbox.setRange(1, 10)
+#         self.max_concurrent_spinbox.setValue(3)
+#         download_layout.addRow("Max Concurrent Downloads:", self.max_concurrent_spinbox)
 
-        self.default_format_combo = QComboBox()
-        self.default_format_combo.addItems([
-            "Best Quality (Video + Audio)",
-            "Best Video Only",
-            "Best Audio Only",
-            "720p Video + Audio",
-            "480p Video + Audio",
-            "MP3 Audio Only"
-        ])
-        download_layout.addRow("Default Format:", self.default_format_combo)
+#         self.default_format_combo = QComboBox()
+#         self.default_format_combo.addItems([
+#             "Best Quality (Video + Audio)",
+#             "Best Video Only",
+#             "Best Audio Only",
+#             "720p Video + Audio",
+#             "480p Video + Audio",
+#             "MP3 Audio Only"
+#         ])
+#         download_layout.addRow("Default Format:", self.default_format_combo)
 
-        self.default_output_edit = QLineEdit()
-        browse_btn = QPushButton("Browse")
-        browse_btn.clicked.connect(self._browse_default_output)
-        output_layout = QHBoxLayout()
-        output_layout.addWidget(self.default_output_edit)
-        output_layout.addWidget(browse_btn)
-        download_layout.addRow("Default Output Folder:", output_layout)
+#         self.default_output_edit = QLineEdit()
+#         browse_btn = QPushButton("Browse")
+#         browse_btn.clicked.connect(self._browse_default_output)
+#         output_layout = QHBoxLayout()
+#         output_layout.addWidget(self.default_output_edit)
+#         output_layout.addWidget(browse_btn)
+#         download_layout.addRow("Default Output Folder:", output_layout)
 
-        layout.addWidget(download_group)
+#         layout.addWidget(download_group)
 
-        # Automatic actions
-        auto_group = QGroupBox("Automatic Actions")
-        auto_layout = QFormLayout(auto_group)
+#         # Automatic actions
+#         auto_group = QGroupBox("Automatic Actions")
+#         auto_layout = QFormLayout(auto_group)
 
-        self.auto_open_check = QCheckBox("Open file after download")
-        self.auto_reveal_check = QCheckBox("Show in folder after download")
-        self.delete_temp_files_check = QCheckBox("Delete temporary files")
-        self.clear_url_after_download_check = QCheckBox("Clear URL after download")
+#         self.auto_open_check = QCheckBox("Open file after download")
+#         self.auto_reveal_check = QCheckBox("Show in folder after download")
+#         self.delete_temp_files_check = QCheckBox("Delete temporary files")
+#         self.clear_url_after_download_check = QCheckBox("Clear URL after download")
 
-        auto_layout.addRow(self.auto_open_check)
-        auto_layout.addRow(self.auto_reveal_check)
-        auto_layout.addRow(self.delete_temp_files_check)
-        auto_layout.addRow(self.clear_url_after_download_check)
+#         auto_layout.addRow(self.auto_open_check)
+#         auto_layout.addRow(self.auto_reveal_check)
+#         auto_layout.addRow(self.delete_temp_files_check)
+#         auto_layout.addRow(self.clear_url_after_download_check)
 
-        layout.addWidget(auto_group)
+#         layout.addWidget(auto_group)
 
-        layout.addStretch()
-        return widget
+#         layout.addStretch()
+#         return widget
 
-    def _create_blocking_tab(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+#     def _create_blocking_tab(self) -> QWidget:
+#         widget = QWidget()
+#         layout = QVBoxLayout(widget)
 
-        # Enable blocking
-        self.enable_blocking_check = QCheckBox("Enable content filtering")
-        layout.addWidget(self.enable_blocking_check)
+#         # Enable blocking
+#         self.enable_blocking_check = QCheckBox("Enable content filtering")
+#         layout.addWidget(self.enable_blocking_check)
 
-        # Blocking level
-        level_group = QGroupBox("Filtering Level")
-        level_layout = QVBoxLayout(level_group)
+#         # Blocking level
+#         level_group = QGroupBox("Filtering Level")
+#         level_layout = QVBoxLayout(level_group)
 
-        self.blocking_level_slider = QSlider(Qt.Orientation.Horizontal)
-        self.blocking_level_slider.setRange(1, 3)
-        self.blocking_level_slider.setValue(2)
-        self.blocking_level_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.blocking_level_slider.valueChanged.connect(self._update_blocking_level_label)
+#         self.blocking_level_slider = QSlider(Qt.Orientation.Horizontal)
+#         self.blocking_level_slider.setRange(1, 3)
+#         self.blocking_level_slider.setValue(2)
+#         self.blocking_level_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+#         self.blocking_level_slider.valueChanged.connect(self._update_blocking_level_label)
 
-        self.blocking_level_label = QLabel("Medium")
-        self.blocking_level_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+#         self.blocking_level_label = QLabel("Medium")
+#         self.blocking_level_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        level_layout.addWidget(QLabel("Low          Medium          High"))
-        level_layout.addWidget(self.blocking_level_slider)
-        level_layout.addWidget(self.blocking_level_label)
+#         level_layout.addWidget(QLabel("Low          Medium          High"))
+#         level_layout.addWidget(self.blocking_level_slider)
+#         level_layout.addWidget(self.blocking_level_label)
 
-        layout.addWidget(level_group)
+#         layout.addWidget(level_group)
 
-        # Custom rules button
-        custom_rules_btn = QPushButton("Manage Custom Rules...")
-        custom_rules_btn.clicked.connect(self._open_custom_rules_dialog)
-        layout.addWidget(custom_rules_btn)
+#         # Custom rules button
+#         custom_rules_btn = QPushButton("Manage Custom Rules...")
+#         custom_rules_btn.clicked.connect(self._open_custom_rules_dialog)
+#         layout.addWidget(custom_rules_btn)
 
-        layout.addStretch()
-        return widget
+#         layout.addStretch()
+#         return widget
 
-    def _create_advanced_tab(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+#     def _create_advanced_tab(self) -> QWidget:
+#         widget = QWidget()
+#         layout = QVBoxLayout(widget)
 
-        # Network settings
-        network_group = QGroupBox("Network")
-        network_layout = QFormLayout(network_group)
+#         # Network settings
+#         network_group = QGroupBox("Network")
+#         network_layout = QFormLayout(network_group)
 
-        self.timeout_spinbox = QSpinBox()
-        self.timeout_spinbox.setRange(10, 300)
-        self.timeout_spinbox.setValue(60)
-        self.timeout_spinbox.setSuffix(" seconds")
-        network_layout.addRow("Connection Timeout:", self.timeout_spinbox)
+#         self.timeout_spinbox = QSpinBox()
+#         self.timeout_spinbox.setRange(10, 300)
+#         self.timeout_spinbox.setValue(60)
+#         self.timeout_spinbox.setSuffix(" seconds")
+#         network_layout.addRow("Connection Timeout:", self.timeout_spinbox)
 
-        self.retries_spinbox = QSpinBox()
-        self.retries_spinbox.setRange(0, 10)
-        self.retries_spinbox.setValue(3)
-        network_layout.addRow("Download Retries:", self.retries_spinbox)
+#         self.retries_spinbox = QSpinBox()
+#         self.retries_spinbox.setRange(0, 10)
+#         self.retries_spinbox.setValue(3)
+#         network_layout.addRow("Download Retries:", self.retries_spinbox)
 
-        layout.addWidget(network_group)
+#         layout.addWidget(network_group)
 
-        # Performance settings
-        perf_group = QGroupBox("Performance")
-        perf_layout = QFormLayout(perf_group)
+#         # Performance settings
+#         perf_group = QGroupBox("Performance")
+#         perf_layout = QFormLayout(perf_group)
 
-        self.cache_size_spinbox = QSpinBox()
-        self.cache_size_spinbox.setRange(50, 10000)
-        self.cache_size_spinbox.setValue(1000)
-        perf_layout.addRow("Cache Size:", self.cache_size_spinbox)
+#         self.cache_size_spinbox = QSpinBox()
+#         self.cache_size_spinbox.setRange(50, 10000)
+#         self.cache_size_spinbox.setValue(1000)
+#         perf_layout.addRow("Cache Size:", self.cache_size_spinbox)
 
-        layout.addWidget(perf_group)
+#         layout.addWidget(perf_group)
 
-        layout.addStretch()
-        return widget
+#         layout.addStretch()
+#         return widget
 
-    def _browse_default_output(self):
-        folder = QFileDialog.getExistingDirectory(
-            self, "Select Default Output Folder",
-            self.default_output_edit.text()
-        )
-        if folder:
-            self.default_output_edit.setText(folder)
+#     def _browse_default_output(self):
+#         folder = QFileDialog.getExistingDirectory(
+#             self, "Select Default Output Folder",
+#             self.default_output_edit.text()
+#         )
+#         if folder:
+#             self.default_output_edit.setText(folder)
 
-    def _update_blocking_level_label(self, value):
-        levels = {1: "Low", 2: "Medium", 3: "High"}
-        self.blocking_level_label.setText(levels.get(value, "Medium"))
+#     def _update_blocking_level_label(self, value):
+#         levels = {1: "Low", 2: "Medium", 3: "High"}
+#         self.blocking_level_label.setText(levels.get(value, "Medium"))
 
-    def _open_custom_rules_dialog(self):
-        if hasattr(self.parent(), 'blocker'):
-            dialog = CustomRulesDialog(self.parent().blocker, self)
-            dialog.exec()
-        else:
-            QMessageBox.information(self, "Custom Rules",
-                                  "Custom rules management is not available.")
+#     def _open_custom_rules_dialog(self):
+#         if hasattr(self.parent(), 'blocker'):
+#             dialog = CustomRulesDialog(self.parent().blocker, self)
+#             dialog.exec()
+#         else:
+#             QMessageBox.information(self, "Custom Rules",
+#                                   "Custom rules management is not available.")
 
-    def _load_settings(self):
-        self.theme_combo.setCurrentText(self.settings.value("theme", "dark"))
-        self.window_size_combo.setCurrentText(self.settings.value("window_size", "960x640"))
-        self.restore_session_check.setChecked(self.settings.value("restore_session", True, bool))
-        self.minimize_to_tray_check.setChecked(self.settings.value("minimize_to_tray", False, bool))
+#     def _load_settings(self):
+#         self.theme_combo.setCurrentText(self.settings.value("theme", "dark"))
+#         self.window_size_combo.setCurrentText(self.settings.value("window_size", "960x640"))
+#         self.restore_session_check.setChecked(self.settings.value("restore_session", True, bool))
+#         self.minimize_to_tray_check.setChecked(self.settings.value("minimize_to_tray", False, bool))
 
-        self.max_concurrent_spinbox.setValue(self.settings.value("max_concurrent", 3, int))
-        self.default_format_combo.setCurrentText(self.settings.value("default_format", "Best Quality (Video + Audio)"))
-        self.default_output_edit.setText(self.settings.value("default_output", str(Path.home() / "Downloads")))
+#         self.max_concurrent_spinbox.setValue(self.settings.value("max_concurrent", 3, int))
+#         self.default_format_combo.setCurrentText(self.settings.value("default_format", "Best Quality (Video + Audio)"))
+#         self.default_output_edit.setText(self.settings.value("default_output", str(Path.home() / "Downloads")))
 
-        self.auto_open_check.setChecked(self.settings.value("auto_open", False, bool))
-        self.auto_reveal_check.setChecked(self.settings.value("auto_reveal", True, bool))
-        self.delete_temp_files_check.setChecked(self.settings.value("delete_temp", True, bool))
-        self.clear_url_after_download_check.setChecked(self.settings.value("clear_url_after_download", True, bool))
+#         self.auto_open_check.setChecked(self.settings.value("auto_open", False, bool))
+#         self.auto_reveal_check.setChecked(self.settings.value("auto_reveal", True, bool))
+#         self.delete_temp_files_check.setChecked(self.settings.value("delete_temp", True, bool))
+#         self.clear_url_after_download_check.setChecked(self.settings.value("clear_url_after_download", True, bool))
 
-        self.enable_blocking_check.setChecked(self.settings.value("enable_blocking", True, bool))
-        self.blocking_level_slider.setValue(self.settings.value("blocking_level", 2, int))
+#         self.enable_blocking_check.setChecked(self.settings.value("enable_blocking", True, bool))
+#         self.blocking_level_slider.setValue(self.settings.value("blocking_level", 2, int))
 
-        self.timeout_spinbox.setValue(self.settings.value("timeout", 60, int))
-        self.retries_spinbox.setValue(self.settings.value("retries", 3, int))
-        self.cache_size_spinbox.setValue(self.settings.value("cache_size", 1000, int))
+#         self.timeout_spinbox.setValue(self.settings.value("timeout", 60, int))
+#         self.retries_spinbox.setValue(self.settings.value("retries", 3, int))
+#         self.cache_size_spinbox.setValue(self.settings.value("cache_size", 1000, int))
 
-    def _save_settings(self):
-        self.settings.setValue("theme", self.theme_combo.currentText())
-        self.settings.setValue("window_size", self.window_size_combo.currentText())
-        self.settings.setValue("restore_session", self.restore_session_check.isChecked())
-        self.settings.setValue("minimize_to_tray", self.minimize_to_tray_check.isChecked())
+#     def _save_settings(self):
+#         self.settings.setValue("theme", self.theme_combo.currentText())
+#         self.settings.setValue("window_size", self.window_size_combo.currentText())
+#         self.settings.setValue("restore_session", self.restore_session_check.isChecked())
+#         self.settings.setValue("minimize_to_tray", self.minimize_to_tray_check.isChecked())
 
-        self.settings.setValue("max_concurrent", self.max_concurrent_spinbox.value())
-        self.settings.setValue("default_format", self.default_format_combo.currentText())
-        self.settings.setValue("default_output", self.default_output_edit.text())
+#         self.settings.setValue("max_concurrent", self.max_concurrent_spinbox.value())
+#         self.settings.setValue("default_format", self.default_format_combo.currentText())
+#         self.settings.setValue("default_output", self.default_output_edit.text())
 
-        self.settings.setValue("auto_open", self.auto_open_check.isChecked())
-        self.settings.setValue("auto_reveal", self.auto_reveal_check.isChecked())
-        self.settings.setValue("delete_temp", self.delete_temp_files_check.isChecked())
-        self.settings.setValue("clear_url_after_download", self.clear_url_after_download_check.isChecked())
+#         self.settings.setValue("auto_open", self.auto_open_check.isChecked())
+#         self.settings.setValue("auto_reveal", self.auto_reveal_check.isChecked())
+#         self.settings.setValue("delete_temp", self.delete_temp_files_check.isChecked())
+#         self.settings.setValue("clear_url_after_download", self.clear_url_after_download_check.isChecked())
 
-        self.settings.setValue("enable_blocking", self.enable_blocking_check.isChecked())
-        self.settings.setValue("blocking_level", self.blocking_level_slider.value())
+#         self.settings.setValue("enable_blocking", self.enable_blocking_check.isChecked())
+#         self.settings.setValue("blocking_level", self.blocking_level_slider.value())
 
-        self.settings.setValue("timeout", self.timeout_spinbox.value())
-        self.settings.setValue("retries", self.retries_spinbox.value())
-        self.settings.setValue("cache_size", self.cache_size_spinbox.value())
+#         self.settings.setValue("timeout", self.timeout_spinbox.value())
+#         self.settings.setValue("retries", self.retries_spinbox.value())
+#         self.settings.setValue("cache_size", self.cache_size_spinbox.value())
 
-    def _save_and_close(self):
-        self._save_settings()
-        self.accept()
+#     def _save_and_close(self):
+#         self._save_settings()
+#         self.accept()
 
 
 class DownloadQueueWidget(QWidget):
@@ -945,105 +945,105 @@ class MainWindow(QMainWindow):
         self.queue_widget = DownloadQueueWidget(self.download_manager)
         tab_widget.addTab(self.queue_widget, "Download Queue")
 
-        # Recent Downloads tab
-        recent_widget = self._create_recent_widget()
-        tab_widget.addTab(recent_widget, "Recent Downloads")
+        # # Recent Downloads tab
+        # recent_widget = self._create_recent_widget()
+        # tab_widget.addTab(recent_widget, "Recent Downloads")
 
-        # Statistics tab
-        stats_widget = self._create_statistics_widget()
-        tab_widget.addTab(stats_widget, "Statistics")
+        # # Statistics tab
+        # stats_widget = self._create_statistics_widget()
+        # tab_widget.addTab(stats_widget, "Statistics")
 
         return tab_widget
 
-    def _create_recent_widget(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+    # def _create_recent_widget(self) -> QWidget:
+    #     widget = QWidget()
+    #     layout = QVBoxLayout(widget)
 
-        # Header
-        header = QHBoxLayout()
-        header.addWidget(QLabel("Recently Downloaded Files"))
-        header.addStretch()
+    #     # Header
+    #     header = QHBoxLayout()
+    #     header.addWidget(QLabel("Recently Downloaded Files"))
+    #     header.addStretch()
 
-        clear_btn = QPushButton("Clear All")
-        clear_btn.clicked.connect(self._clear_recent_downloads)
-        header.addWidget(clear_btn)
+    #     clear_btn = QPushButton("Clear All")
+    #     clear_btn.clicked.connect(self._clear_recent_downloads)
+    #     header.addWidget(clear_btn)
 
-        layout.addLayout(header)
+    #     layout.addLayout(header)
 
-        # Recent files table
-        self.recent_table = QTableWidget()
-        self.recent_table.setColumnCount(4)
-        self.recent_table.setHorizontalHeaderLabels([
-            "File", "Size", "Date", "Actions"
-        ])
+    #     # Recent files table
+    #     self.recent_table = QTableWidget()
+    #     self.recent_table.setColumnCount(4)
+    #     self.recent_table.setHorizontalHeaderLabels([
+    #         "File", "Size", "Date", "Actions"
+    #     ])
 
-        header = self.recent_table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+    #     header = self.recent_table.horizontalHeader()
+    #     header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+    #     header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+    #     header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+    #     header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
 
-        self.recent_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.recent_table.customContextMenuRequested.connect(self._show_recent_context_menu)
+    #     self.recent_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+    #     self.recent_table.customContextMenuRequested.connect(self._show_recent_context_menu)
 
-        layout.addWidget(self.recent_table)
+    #     layout.addWidget(self.recent_table)
 
-        self._load_recent_downloads()
+    #     self._load_recent_downloads()
 
-        return widget
+    #     return widget
 
-    def _create_statistics_widget(self) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+    # def _create_statistics_widget(self) -> QWidget:
+    #     widget = QWidget()
+    #     layout = QVBoxLayout(widget)
 
-        # Statistics groups
-        download_stats_group = QGroupBox("Download Statistics")
-        download_stats_layout = QGridLayout(download_stats_group)
+    #     # Statistics groups
+    #     download_stats_group = QGroupBox("Download Statistics")
+    #     download_stats_layout = QGridLayout(download_stats_group)
 
-        self.stats_labels = {}
-        stats_items = [
-            ("Total Downloads", "total_downloads"),
-            ("Active Downloads", "active_downloads"),
-            ("Queued Downloads", "queued_downloads"),
-            ("Completed Downloads", "completed_downloads"),
-        ]
+    #     self.stats_labels = {}
+    #     stats_items = [
+    #         ("Total Downloads", "total_downloads"),
+    #         ("Active Downloads", "active_downloads"),
+    #         ("Queued Downloads", "queued_downloads"),
+    #         ("Completed Downloads", "completed_downloads"),
+    #     ]
 
-        for i, (label, key) in enumerate(stats_items):
-            download_stats_layout.addWidget(QLabel(f"{label}:"), i, 0)
-            value_label = QLabel("0")
-            value_label.setStyleSheet("font-weight: bold;")
-            self.stats_labels[key] = value_label
-            download_stats_layout.addWidget(value_label, i, 1)
+    #     for i, (label, key) in enumerate(stats_items):
+    #         download_stats_layout.addWidget(QLabel(f"{label}:"), i, 0)
+    #         value_label = QLabel("0")
+    #         value_label.setStyleSheet("font-weight: bold;")
+    #         self.stats_labels[key] = value_label
+    #         download_stats_layout.addWidget(value_label, i, 1)
 
-        layout.addWidget(download_stats_group)
+    #     layout.addWidget(download_stats_group)
 
-        # Blocking statistics
-        blocking_stats_group = QGroupBox("Content Filter Statistics")
-        blocking_stats_layout = QGridLayout(blocking_stats_group)
+    #     # Blocking statistics
+    #     blocking_stats_group = QGroupBox("Content Filter Statistics")
+    #     blocking_stats_layout = QGridLayout(blocking_stats_group)
 
-        blocking_items = [
-            ("URLs Checked", "urls_checked"),
-            ("URLs Blocked", "urls_blocked"),
-            ("Block Rate", "block_rate"),
-            ("Cache Hits", "cache_hits")
-        ]
+    #     blocking_items = [
+    #         ("URLs Checked", "urls_checked"),
+    #         ("URLs Blocked", "urls_blocked"),
+    #         ("Block Rate", "block_rate"),
+    #         ("Cache Hits", "cache_hits")
+    #     ]
 
-        for i, (label, key) in enumerate(blocking_items):
-            blocking_stats_layout.addWidget(QLabel(f"{label}:"), i, 0)
-            value_label = QLabel("0")
-            value_label.setStyleSheet("font-weight: bold;")
-            self.stats_labels[key] = value_label
-            blocking_stats_layout.addWidget(value_label, i, 1)
+    #     for i, (label, key) in enumerate(blocking_items):
+    #         blocking_stats_layout.addWidget(QLabel(f"{label}:"), i, 0)
+    #         value_label = QLabel("0")
+    #         value_label.setStyleSheet("font-weight: bold;")
+    #         self.stats_labels[key] = value_label
+    #         blocking_stats_layout.addWidget(value_label, i, 1)
 
-        layout.addWidget(blocking_stats_group)
+    #     layout.addWidget(blocking_stats_group)
 
-        # Update button
-        update_stats_btn = QPushButton("Update Statistics")
-        update_stats_btn.clicked.connect(self._update_statistics)
-        layout.addWidget(update_stats_btn)
+    #     # Update button
+    #     update_stats_btn = QPushButton("Update Statistics")
+    #     update_stats_btn.clicked.connect(self._update_statistics)
+    #     layout.addWidget(update_stats_btn)
 
-        layout.addStretch()
-        return widget
+    #     layout.addStretch()
+    #     return widget
 
     def _setup_menu_bar(self):
         menubar = self.menuBar()
@@ -1058,12 +1058,12 @@ class MainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
-        settings_action = QAction("&Settings...", self)
-        settings_action.setShortcut(QKeySequence("Ctrl+,"))
-        settings_action.triggered.connect(self._open_settings)
-        file_menu.addAction(settings_action)
+        # settings_action = QAction("&Settings...", self)
+        # settings_action.setShortcut(QKeySequence("Ctrl+,"))
+        # settings_action.triggered.connect(self._open_settings)
+        # file_menu.addAction(settings_action)
 
-        file_menu.addSeparator()
+        # file_menu.addSeparator()
 
         exit_action = QAction("E&xit", self)
         exit_action.setShortcut(QKeySequence.StandardKey.Quit)
@@ -1143,11 +1143,11 @@ class MainWindow(QMainWindow):
 
         toolbar.addSeparator()
 
-        # Settings action
-        settings_action = QAction("Settings", self)
-        settings_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
-        settings_action.triggered.connect(self._open_settings)
-        toolbar.addAction(settings_action)
+        # # Settings action
+        # settings_action = QAction("Settings", self)
+        # settings_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
+        # settings_action.triggered.connect(self._open_settings)
+        # toolbar.addAction(settings_action)
 
     def _setup_status_bar(self):
         self.status_bar = self.statusBar()
@@ -1503,15 +1503,15 @@ class MainWindow(QMainWindow):
         if text and (text.startswith("http://") or text.startswith("https://")):
             self.url_input.setText(text)
 
-    def _open_settings(self):
-        dialog = SettingsDialog(self)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            # Reload settings that affect the main window
-            self._apply_theme(self.settings.value("theme", "dark"))
+    # def _open_settings(self):
+    #     dialog = SettingsDialog(self)
+    #     if dialog.exec() == QDialog.DialogCode.Accepted:
+    #         # Reload settings that affect the main window
+    #         self._apply_theme(self.settings.value("theme", "dark"))
 
-            # Update download manager settings
-            max_concurrent = self.settings.value("max_concurrent", 3, int)
-            self.download_manager.set_max_concurrent_downloads(max_concurrent)
+    #         # Update download manager settings
+    #         max_concurrent = self.settings.value("max_concurrent", 3, int)
+    #         self.download_manager.set_max_concurrent_downloads(max_concurrent)
 
     def _refresh_all(self):
         self._load_recent_downloads()
