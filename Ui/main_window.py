@@ -398,7 +398,7 @@ class SettingsDialog(QDialog):
         theme_layout.addRow("Theme:", self.theme_combo)
 
         self.window_size_combo = QComboBox()
-        self.window_size_combo.addItems(["960x640", "1200x800", "1440x900", "Custom"])
+        self.window_size_combo.addItems(["960x640", "1200x800", "1440x900"])
         theme_layout.addRow("Window Size:", self.window_size_combo)
 
         layout.addWidget(theme_group)
