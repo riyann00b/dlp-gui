@@ -136,7 +136,7 @@ class DownloadThread(QThread):
 
     def pause(self) -> None:
         """Pause the download (if supported by the underlying downloader)."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             if self._current_progress.status == DownloadStatus.DOWNLOADING:
                 self._is_paused = True
                 self._current_progress.status = DownloadStatus.PAUSED
@@ -144,7 +144,7 @@ class DownloadThread(QThread):
 
     def resume(self) -> None:
         """Resume a paused download."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             if self._current_progress.status == DownloadStatus.PAUSED:
                 self._is_paused = False
                 self._current_progress.status = DownloadStatus.DOWNLOADING
@@ -153,7 +153,7 @@ class DownloadThread(QThread):
 
     def cancel(self) -> None:
         """Cancel the download and cleanup."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             self._is_cancelled = True
             self._should_stop = True
             if self._is_paused:
@@ -210,7 +210,7 @@ class DownloadThread(QThread):
 
             # Handle pause state
             if self._is_paused:
-                with QMutex(self._mutex):
+                with QMutexLocker(self._mutex):
                     self._wait_condition.wait(self._mutex)
                 if self._is_cancelled:
                     return
@@ -364,7 +364,7 @@ class DownloadManager(QThread):
 
     def remove_download(self, download_id: str) -> bool:
         """Remove a download from queue or cancel if active."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             # Check active downloads
             if download_id in self._active_downloads:
                 download_thread = self._active_downloads[download_id]
@@ -474,7 +474,7 @@ class DownloadManager(QThread):
 
     def clear_completed(self) -> None:
         """Clear completed downloads from tracking."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             self._completed_downloads.clear()
 
     def set_max_concurrent_downloads(self, max_downloads: int) -> None:
@@ -584,7 +584,7 @@ class DownloadManager(QThread):
 
     def stop_manager(self) -> None:
         """Stop the download manager and all active downloads."""
-        with QMutex(self._mutex):
+        with QMutexLocker(self._mutex):
             self._is_running = False
 
             # Cancel all active downloads
