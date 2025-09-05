@@ -1,6 +1,6 @@
 import os
 import yt_dlp
-from typing import Callable, Optional, Dict, List, Any
+from typing import Callable, Optional, Dict, List, Any, Tuple
 from Core.logger import ActivityLogger
 
 
@@ -39,7 +39,6 @@ class DownloadProgressHook:
                 self.progress_callback(f"Error: {error_msg}")
 
         except Exception as e:
-            # Fallback: ensure errors in hook don't crash downloader
             self.progress_callback(f"Progress hook error: {e}")
 
 
@@ -55,7 +54,7 @@ class Downloader:
         output_path: str,
         config_options: Dict[str, Any],
         progress_callback: Optional[Callable[[str], None]] = None
-    ) -> bool:
+    ) -> Tuple[bool, List[str]]:
         """
         Download video/audio using yt-dlp with given configuration.
 
@@ -66,65 +65,58 @@ class Downloader:
             progress_callback (function, optional): Callback for progress updates.
 
         Returns:
-            bool: True if successful, False otherwise.
+            (bool, list[str]): Success flag and list of downloaded file paths.
         """
         if not url or not isinstance(url, str):
             self.logger.log_activity("Invalid URL provided for download.")
-            return False
+            return False, []
 
         try:
             ydl_opts = config_options.copy()
-
-            # Ensure output directory exists
             os.makedirs(output_path, exist_ok=True)
 
-            # Configure output template
             outtmpl = ydl_opts.get("outtmpl", "%(title)s.%(ext)s")
             ydl_opts["outtmpl"] = os.path.join(output_path, outtmpl)
 
-            # Add progress hook if provided
             if progress_callback:
                 ydl_opts["progress_hooks"] = [DownloadProgressHook(progress_callback)]
 
-            # Log activity
             self.logger.log_activity(f"Download started: {url}")
             self.logger.log_activity(f"yt-dlp options: {config_options}")
 
-            # Start download
+            file_paths: List[str] = []
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
+                info = ydl.extract_info(url, download=True)
+
+                # Single video
+                if "entries" not in info:
+                    file_paths.append(ydl.prepare_filename(info))
+                else:  # Playlist
+                    for entry in info["entries"]:
+                        if entry:
+                            file_paths.append(ydl.prepare_filename(entry))
 
             self.logger.log_activity(f"Download completed successfully: {url}")
-            return True
+            return True, file_paths
 
         except yt_dlp.utils.DownloadError as e:
             msg = f"Download error: {e}"
             self.logger.log_activity(msg)
             if progress_callback:
                 progress_callback(msg)
-            return False
+            return False, []
 
         except Exception as e:
             msg = f"Unexpected error: {e}"
             self.logger.log_activity(msg)
             if progress_callback:
                 progress_callback(msg)
-            return False
+            return False, []
 
     def get_video_info(self, url: str) -> Optional[Dict[str, Any]]:
-        """
-        Get video information without downloading.
-
-        Args:
-            url (str): URL to analyze.
-
-        Returns:
-            dict | None: Video information or None if error.
-        """
         try:
             with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
                 info = ydl.extract_info(url, download=False)
-
                 return {
                     "title": info.get("title", "Unknown"),
                     "duration": info.get("duration", 0),
@@ -133,34 +125,15 @@ class Downloader:
                     "formats": len(info.get("formats", [])),
                     "is_playlist": "entries" in info,
                 }
-
         except Exception as e:
             self.logger.log_activity(f"Info extraction error: {e}")
             return None
 
-        """Add a file to the Recent Downloads list"""
-        item = QListWidgetItem(file_path)
-        self.recent_list.insertItem(0, item)  # newest on top
-
-        # keep only last 10 entries
-        if self.recent_list.count() > 10:
-            self.recent_list.takeItem(self.recent_list.count() - 1)
-
     def get_available_formats(self, url: str) -> List[Dict[str, Any]]:
-        """
-        Get list of available formats for a URL.
-
-        Args:
-            url (str): URL to check.
-
-        Returns:
-            list: List of format dictionaries.
-        """
         try:
             with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
                 info = ydl.extract_info(url, download=False)
                 return info.get("formats", [])
-
         except Exception as e:
             self.logger.log_activity(f"Format extraction error: {e}")
             return []

@@ -1,0 +1,3 @@
+yt-dlp>=2023.12.30
+PyQt6>=6.6.1
+pyqtdarktheme>=2.1.0
