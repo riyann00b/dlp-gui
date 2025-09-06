@@ -53,7 +53,7 @@ class Downloader:
         url: str,
         output_path: str,
         config_options: Dict[str, Any],
-        progress_callback: Optional[Callable[[str], None]] = None
+        progress_callback: Optional[Callable[[str], None]] = None,
     ) -> Tuple[bool, List[str]]:
         """
         Download video/audio using yt-dlp with given configuration.

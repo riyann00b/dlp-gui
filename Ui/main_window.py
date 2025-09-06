@@ -4,25 +4,34 @@ from pathlib import Path
 from typing import List
 import importlib.util
 
-from PyQt6.QtCore import (
-    Qt, QTimer, QSettings
-)
-from PyQt6.QtGui import (
-    QAction, QKeySequence,
-    QCloseEvent
-)
+from PyQt6.QtCore import Qt, QTimer, QSettings
+from PyQt6.QtGui import QAction, QKeySequence, QCloseEvent
 from PyQt6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QPushButton, QLineEdit, QComboBox, QLabel, QProgressBar, QMenu,
-    QCheckBox, QFileDialog, QMessageBox, QFrame, QSplitter,
-    QTableWidget, QTableWidgetItem, QHeaderView, QApplication
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFormLayout,
+    QPushButton,
+    QLineEdit,
+    QComboBox,
+    QLabel,
+    QProgressBar,
+    QMenu,
+    QCheckBox,
+    QFileDialog,
+    QMessageBox,
+    QFrame,
+    QSplitter,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
+    QApplication,
 )
 
 from Core.blocker import ContentBlocker
 from Core.recent import RecentFoldersManager
-from Core.threads import (
-    DownloadManager, format_speed, format_duration
-)
+from Core.threads import DownloadManager, format_speed, format_duration
 
 
 # class SettingsDialog(QDialog):
@@ -43,7 +52,6 @@ from Core.threads import (
 #         # Download settings
 #         download_group = QGroupBox("Download Settings")
 #         download_layout = QFormLayout(download_group)
-
 
 
 #         # Default output folder
@@ -151,9 +159,9 @@ class DownloadQueueWidget(QWidget):
         # Downloads table
         self.downloads_table = QTableWidget()
         self.downloads_table.setColumnCount(5)
-        self.downloads_table.setHorizontalHeaderLabels([
-            "File", "Status", "Progress", "Speed", "ETA"
-        ])
+        self.downloads_table.setHorizontalHeaderLabels(
+            ["File", "Status", "Progress", "Speed", "ETA"]
+        )
 
         header = self.downloads_table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
@@ -297,7 +305,9 @@ class MainWindow(QMainWindow):
         # Output path with recent folders
         output_layout = QHBoxLayout()
         self.path_input = QLineEdit()
-        default_path = self.settings.value("default_output", str(Path.home() / "Downloads"))
+        default_path = self.settings.value(
+            "default_output", str(Path.home() / "Downloads")
+        )
         self.path_input.setText(default_path)
 
         self.browse_btn = QPushButton("Browse")
@@ -314,14 +324,16 @@ class MainWindow(QMainWindow):
 
         # Format selection with proper yt-dlp format strings
         self.format_combo = QComboBox()
-        self.format_combo.addItems([
-            "Best Video + Audio",
-            "Best Video Only",
-            "Best Audio Only",
-            "720p",
-            "480p",
-            "MP3 Audio"
-        ])
+        self.format_combo.addItems(
+            [
+                "Best Video + Audio",
+                "Best Video Only",
+                "Best Audio Only",
+                "720p",
+                "480p",
+                "MP3 Audio",
+            ]
+        )
         form_layout.addRow("Format:", self.format_combo)
 
         # Options
@@ -468,8 +480,12 @@ class MainWindow(QMainWindow):
         try:
             block_result = self.blocker.is_blocked(url)
             if block_result.is_blocked:
-                self.url_validation_label.setText(f"URL blocked: {block_result.details}")
-                self.url_validation_label.setStyleSheet("color: #ff6b6b; font-size: 12px;")
+                self.url_validation_label.setText(
+                    f"URL blocked: {block_result.details}"
+                )
+                self.url_validation_label.setStyleSheet(
+                    "color: #ff6b6b; font-size: 12px;"
+                )
                 self.download_btn.setEnabled(False)
                 return
         except Exception:
@@ -497,9 +513,13 @@ class MainWindow(QMainWindow):
         else:
             for folder in recent_folders:
                 action = menu.addAction(str(Path(folder).name))
-                action.triggered.connect(lambda checked, f=folder: self.path_input.setText(f))
+                action.triggered.connect(
+                    lambda checked, f=folder: self.path_input.setText(f)
+                )
 
-        menu.exec(self.recent_paths_btn.mapToGlobal(self.recent_paths_btn.rect().bottomLeft()))
+        menu.exec(
+            self.recent_paths_btn.mapToGlobal(self.recent_paths_btn.rect().bottomLeft())
+        )
 
     def _start_download(self):
         url = self.url_input.text().strip()
@@ -516,10 +536,10 @@ class MainWindow(QMainWindow):
         format_string = self._get_format_string()
 
         config_options = {
-            'format': format_string,
-            'writesubtitles': self.subtitles_check.isChecked(),
-            'writeinfojson': self.metadata_check.isChecked(),
-            'writethumbnail': self.thumbnail_check.isChecked(),
+            "format": format_string,
+            "writesubtitles": self.subtitles_check.isChecked(),
+            "writeinfojson": self.metadata_check.isChecked(),
+            "writethumbnail": self.thumbnail_check.isChecked(),
         }
 
         # Add to download queue
@@ -530,7 +550,9 @@ class MainWindow(QMainWindow):
             self.recent_folders_manager.add_folder(output_path)
 
             # Update UI
-            self.current_download_label.setText(f"Downloading: {url[:60]}..." if len(url) > 60 else url)
+            self.current_download_label.setText(
+                f"Downloading: {url[:60]}..." if len(url) > 60 else url
+            )
             self.progress_bar.setVisible(True)
             self.progress_bar.setValue(0)
 
@@ -554,7 +576,7 @@ class MainWindow(QMainWindow):
             "Best Audio Only": "ba*",  # Best audio only, any format
             "720p": "bv*[height<=720]+ba/b[height<=720]",  # Max 720p, any format
             "480p": "bv*[height<=480]+ba/b[height<=480]",  # Max 480p, any format
-            "MP3 Audio": "ba*"  # Best audio (you'd handle MP3 conversion separately)
+            "MP3 Audio": "ba*",  # Best audio (you'd handle MP3 conversion separately)
         }
 
         return format_map.get(format_text, "bv*+ba/b")
@@ -563,7 +585,9 @@ class MainWindow(QMainWindow):
         self.status_label.setText(f"Download started: {Path(url).name}")
 
     def _on_download_finished(self, success: bool, message: str, file_paths: List[str]):
-        self.status_label.setText(f"Download {'completed' if success else 'failed'}: {message}")
+        self.status_label.setText(
+            f"Download {'completed' if success else 'failed'}: {message}"
+        )
 
         if success and file_paths:
             # Auto-reveal file if enabled
@@ -574,7 +598,9 @@ class MainWindow(QMainWindow):
 
     def _on_download_error(self, error_type: str, error_message: str):
         self.status_label.setText(f"Download error: {error_message}")
-        QMessageBox.critical(self, "Download Error", f"Download failed:\n{error_message}")
+        QMessageBox.critical(
+            self, "Download Error", f"Download failed:\n{error_message}"
+        )
 
     def _on_download_progress(self, download_id: str, progress_info: dict):
         progress = progress_info.get("progress", 0)
@@ -593,7 +619,7 @@ class MainWindow(QMainWindow):
             self.stats_status_label.setText(f"Downloads: {count['active']} active")
 
             # Hide progress if no active downloads
-            if count['active'] == 0:
+            if count["active"] == 0:
                 self.progress_bar.setVisible(False)
                 self.current_download_label.setText("No active download")
                 self.progress_details_label.setText("")
@@ -608,7 +634,9 @@ class MainWindow(QMainWindow):
             self.settings.sync()
 
             # Update menu checkboxes
-            if hasattr(self, 'dark_theme_action') and hasattr(self, 'light_theme_action'):
+            if hasattr(self, "dark_theme_action") and hasattr(
+                self, "light_theme_action"
+            ):
                 self.dark_theme_action.setChecked(theme == "dark")
                 self.light_theme_action.setChecked(theme == "light")
 
@@ -621,6 +649,7 @@ class MainWindow(QMainWindow):
         if self.has_qdarktheme:
             try:
                 import qdarktheme
+
                 # Clear any existing stylesheet first
                 self.setStyleSheet("")
                 qdarktheme.setup_theme(theme)
@@ -657,10 +686,10 @@ class MainWindow(QMainWindow):
             status_message = f"Applied {theme} theme (fallback styling)"
 
         # Update status bar
-        if hasattr(self, 'theme_status_label'):
+        if hasattr(self, "theme_status_label"):
             self.theme_status_label.setText(f"Theme: {theme}")
 
-        if hasattr(self, 'status_label'):
+        if hasattr(self, "status_label"):
             self.status_label.setText(status_message)
 
     def _apply_fallback_theme(self, theme: str):
@@ -1042,13 +1071,14 @@ class MainWindow(QMainWindow):
         # Check if downloads are active
         try:
             count = self.download_manager.get_download_count()
-            if count['active'] > 0:
+            if count["active"] > 0:
                 reply = QMessageBox.question(
-                    self, "Active Downloads",
+                    self,
+                    "Active Downloads",
                     f"There are {count['active']} active downloads.\n"
                     "Do you want to close anyway?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                    QMessageBox.StandardButton.No
+                    QMessageBox.StandardButton.No,
                 )
 
                 if reply == QMessageBox.StandardButton.No:
@@ -1061,10 +1091,10 @@ class MainWindow(QMainWindow):
             pass
 
         # Stop timers
-        if hasattr(self, 'update_timer'):
+        if hasattr(self, "update_timer"):
             self.update_timer.stop()
 
-        if hasattr(self, 'queue_widget') and hasattr(self.queue_widget, 'update_timer'):
+        if hasattr(self, "queue_widget") and hasattr(self.queue_widget, "update_timer"):
             self.queue_widget.update_timer.stop()
 
         # Stop download manager

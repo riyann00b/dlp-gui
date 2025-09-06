@@ -60,7 +60,7 @@ def setup_application():
                 border-radius: 4px;
                 margin: 2px;
             }
-            """
+            """,
         )
     except Exception as e:
         print(f"Theme setup failed: {e}")
@@ -105,32 +105,33 @@ def check_dependencies():
     missing_deps = []
 
     # Check for required modules
-    required_modules = [
-        'yt_dlp',
-        'PyQt6',
-        'qdarktheme'
-    ]
+    required_modules = ["yt_dlp", "PyQt6", "qdarktheme"]
 
     for module in required_modules:
         try:
-            __import__(module.replace('-', '_'))
+            __import__(module.replace("-", "_"))
         except ImportError:
             missing_deps.append(module)
 
     if missing_deps:
-        error_msg = "Missing required dependencies:\n" + "\n".join(f"- {dep}" for dep in missing_deps)
-        error_msg += "\n\nPlease install them using:\npip install " + " ".join(missing_deps)
+        error_msg = "Missing required dependencies:\n" + "\n".join(
+            f"- {dep}" for dep in missing_deps
+        )
+        error_msg += "\n\nPlease install them using:\npip install " + " ".join(
+            missing_deps
+        )
 
         print(error_msg)
 
         # Show GUI error if PyQt6 is available
-        if 'PyQt6' not in missing_deps:
+        if "PyQt6" not in missing_deps:
             QApplication(sys.argv)
             QMessageBox.critical(None, "Missing Dependencies", error_msg)
 
         return False
 
     return True
+
 
 def main():
     """Main application entry point."""
@@ -175,8 +176,11 @@ def main():
 
         # Show error dialog
         try:
-            QMessageBox.critical(None, "Startup Error",
-                               f"{error_msg}\n\nPlease check the console for more details.")
+            QMessageBox.critical(
+                None,
+                "Startup Error",
+                f"{error_msg}\n\nPlease check the console for more details.",
+            )
         except Exception:
             pass
 

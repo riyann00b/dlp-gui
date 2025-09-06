@@ -12,6 +12,7 @@ from enum import Enum
 
 class BlockReason(Enum):
     """Enumeration of block reasons for better categorization."""
+
     DOMAIN_BLOCKED = "domain_blocked"
     KEYWORD_BLOCKED = "keyword_blocked"
     PATTERN_BLOCKED = "pattern_blocked"
@@ -24,6 +25,7 @@ class BlockReason(Enum):
 @dataclass
 class BlockRule:
     """Data class representing a content blocking rule."""
+
     rule_type: str  # domain, keyword, pattern, custom
     value: str
     enabled: bool = True
@@ -39,6 +41,7 @@ class BlockRule:
 @dataclass
 class BlockResult:
     """Result of a URL blocking check."""
+
     is_blocked: bool
     reason: BlockReason
     matched_rule: Optional[str] = None
@@ -88,7 +91,7 @@ class ContentBlocker:
             "total_checks": 0,
             "blocked_requests": 0,
             "cache_hits": 0,
-            "whitelist_overrides": 0
+            "whitelist_overrides": 0,
         }
 
         # Initialize
@@ -121,17 +124,42 @@ class ContentBlocker:
         """Load default blocking rules."""
         # Default blocked domains (adult content)
         default_domains = [
-            "pornhub.com", "xvideos.com", "xhamster.com", "redtube.com",
-            "youporn.com", "tube8.com", "spankbang.com", "xnxx.com",
-            "beeg.com", "sex.com", "chaturbate.com", "cam4.com",
-            "livejasmin.com", "bongacams.com", "stripchat.com"
+            "pornhub.com",
+            "xvideos.com",
+            "xhamster.com",
+            "redtube.com",
+            "youporn.com",
+            "tube8.com",
+            "spankbang.com",
+            "xnxx.com",
+            "beeg.com",
+            "sex.com",
+            "chaturbate.com",
+            "cam4.com",
+            "livejasmin.com",
+            "bongacams.com",
+            "stripchat.com",
         ]
 
         # Default blocked keywords
         default_keywords = [
-            "porn", "xxx", "sex", "nude", "naked", "adult", "nsfw",
-            "erotic", "fetish", "cam", "strip", "escort", "prostitute",
-            "sexual", "explicit", "hardcore", "softcore"
+            "porn",
+            "xxx",
+            "sex",
+            "nude",
+            "naked",
+            "adult",
+            "nsfw",
+            "erotic",
+            "fetish",
+            "cam",
+            "strip",
+            "escort",
+            "prostitute",
+            "sexual",
+            "explicit",
+            "hardcore",
+            "softcore",
         ]
 
         # Default patterns (regex)
@@ -147,7 +175,7 @@ class ContentBlocker:
                 self._domain_rules[domain] = BlockRule(
                     rule_type="domain",
                     value=domain,
-                    description="Default adult content domain"
+                    description="Default adult content domain",
                 )
 
         for keyword in default_keywords:
@@ -155,7 +183,7 @@ class ContentBlocker:
                 self._keyword_rules[keyword] = BlockRule(
                     rule_type="keyword",
                     value=keyword,
-                    description="Default adult content keyword"
+                    description="Default adult content keyword",
                 )
 
         for pattern in default_patterns:
@@ -165,7 +193,7 @@ class ContentBlocker:
                     rule = BlockRule(
                         rule_type="pattern",
                         value=pattern,
-                        description="Default adult content pattern"
+                        description="Default adult content pattern",
                     )
                     self._pattern_rules[pattern] = (compiled_pattern, rule)
                 except re.error as e:
@@ -187,7 +215,9 @@ class ContentBlocker:
             # Normalize URL
             url = url.strip().lower()
             if not url:
-                return BlockResult(False, BlockReason.DOMAIN_BLOCKED, details="Empty URL")
+                return BlockResult(
+                    False, BlockReason.DOMAIN_BLOCKED, details="Empty URL"
+                )
 
             # Check cache first
             cached_result = self._get_cached_result(url)
@@ -221,8 +251,9 @@ class ContentBlocker:
             # Check whitelist first
             if self._is_whitelisted(domain, url):
                 self._block_stats["whitelist_overrides"] += 1
-                return BlockResult(False, BlockReason.WHITELIST_OVERRIDE,
-                                details="URL is whitelisted")
+                return BlockResult(
+                    False, BlockReason.WHITELIST_OVERRIDE, details="URL is whitelisted"
+                )
 
             # Domain check
             domain_result = self._check_domain_rules(domain)
@@ -249,8 +280,9 @@ class ContentBlocker:
         except Exception as e:
             self.logger.error(f"Error checking URL {url}: {e}")
             # Fail safe - block on error
-            return BlockResult(True, BlockReason.CUSTOM_RULE,
-                             details=f"Blocked due to error: {e}")
+            return BlockResult(
+                True, BlockReason.CUSTOM_RULE, details=f"Blocked due to error: {e}"
+            )
 
     def _check_domain_rules(self, domain: str) -> BlockResult:
         """Check domain-based blocking rules."""
@@ -264,7 +296,7 @@ class ContentBlocker:
                     True,
                     BlockReason.DOMAIN_BLOCKED,
                     matched_rule=rule_domain,
-                    details=f"Domain blocked: {rule_domain}"
+                    details=f"Domain blocked: {rule_domain}",
                 )
 
         return BlockResult(False, BlockReason.DOMAIN_BLOCKED)
@@ -287,7 +319,7 @@ class ContentBlocker:
                     True,
                     BlockReason.KEYWORD_BLOCKED,
                     matched_rule=keyword,
-                    details=f"Keyword blocked: {keyword}"
+                    details=f"Keyword blocked: {keyword}",
                 )
 
         return BlockResult(False, BlockReason.KEYWORD_BLOCKED)
@@ -303,7 +335,7 @@ class ContentBlocker:
                     True,
                     BlockReason.PATTERN_BLOCKED,
                     matched_rule=pattern_str,
-                    details=f"Pattern blocked: {pattern_str}"
+                    details=f"Pattern blocked: {pattern_str}",
                 )
 
         return BlockResult(False, BlockReason.PATTERN_BLOCKED)
@@ -314,23 +346,23 @@ class ContentBlocker:
         query_params = parse_qs(parsed_url.query)
 
         # Block if 'adult' parameter is present
-        if 'adult' in query_params:
+        if "adult" in query_params:
             return BlockResult(
                 True,
                 BlockReason.CUSTOM_RULE,
                 matched_rule="adult_query_param",
-                details="URL contains adult query parameter"
+                details="URL contains adult query parameter",
             )
 
         # Block age-restricted content indicators
-        age_indicators = ['18+', 'mature', 'restricted', 'age_gate']
+        age_indicators = ["18+", "mature", "restricted", "age_gate"]
         for indicator in age_indicators:
             if indicator in url.lower():
                 return BlockResult(
                     True,
                     BlockReason.AGE_RESTRICTED,
                     matched_rule=indicator,
-                    details=f"Age restriction indicator: {indicator}"
+                    details=f"Age restriction indicator: {indicator}",
                 )
 
         return BlockResult(False, BlockReason.CUSTOM_RULE)
@@ -356,7 +388,7 @@ class ContentBlocker:
                 self._domain_rules[domain] = BlockRule(
                     rule_type="domain",
                     value=domain,
-                    description=description or f"User-added domain: {domain}"
+                    description=description or f"User-added domain: {domain}",
                 )
                 self._clear_cache()
                 self._save_rules()
@@ -364,7 +396,9 @@ class ContentBlocker:
                 return True
             return False
 
-    def add_keyword_rule(self, keyword: str, case_sensitive: bool = False, description: str = "") -> bool:
+    def add_keyword_rule(
+        self, keyword: str, case_sensitive: bool = False, description: str = ""
+    ) -> bool:
         """Add a new keyword blocking rule."""
         with self._lock:
             keyword = keyword.strip()
@@ -376,7 +410,7 @@ class ContentBlocker:
                     rule_type="keyword",
                     value=keyword,
                     case_sensitive=case_sensitive,
-                    description=description or f"User-added keyword: {keyword}"
+                    description=description or f"User-added keyword: {keyword}",
                 )
                 self._clear_cache()
                 self._save_rules()
@@ -393,7 +427,7 @@ class ContentBlocker:
                     rule = BlockRule(
                         rule_type="pattern",
                         value=pattern,
-                        description=description or f"User-added pattern: {pattern}"
+                        description=description or f"User-added pattern: {pattern}",
                     )
                     self._pattern_rules[pattern] = (compiled_pattern, rule)
                     self._clear_cache()
@@ -474,21 +508,26 @@ class ContentBlocker:
                 "domains": [asdict(rule) for rule in self._domain_rules.values()],
                 "keywords": [asdict(rule) for rule in self._keyword_rules.values()],
                 "patterns": [asdict(rule) for _, rule in self._pattern_rules.values()],
-                "whitelist": list(self._whitelist)
+                "whitelist": list(self._whitelist),
             }
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get blocking statistics."""
         with self._lock:
             stats = self._block_stats.copy()
-            stats.update({
-                "total_domain_rules": len(self._domain_rules),
-                "total_keyword_rules": len(self._keyword_rules),
-                "total_pattern_rules": len(self._pattern_rules),
-                "whitelist_entries": len(self._whitelist),
-                "cache_size": len(self._block_cache),
-                "block_rate": (stats["blocked_requests"] / max(1, stats["total_checks"])) * 100
-            })
+            stats.update(
+                {
+                    "total_domain_rules": len(self._domain_rules),
+                    "total_keyword_rules": len(self._keyword_rules),
+                    "total_pattern_rules": len(self._pattern_rules),
+                    "whitelist_entries": len(self._whitelist),
+                    "cache_size": len(self._block_cache),
+                    "block_rate": (
+                        stats["blocked_requests"] / max(1, stats["total_checks"])
+                    )
+                    * 100,
+                }
+            )
             return stats
 
     def clear_statistics(self) -> None:
@@ -498,7 +537,7 @@ class ContentBlocker:
                 "total_checks": 0,
                 "blocked_requests": 0,
                 "cache_hits": 0,
-                "whitelist_overrides": 0
+                "whitelist_overrides": 0,
             }
 
     def _get_cached_result(self, url: str) -> Optional[BlockResult]:
@@ -521,8 +560,7 @@ class ContentBlocker:
         if len(self._block_cache) >= self._cache_max_size:
             # Remove oldest entries
             oldest_urls = sorted(
-                self._cache_timestamps.keys(),
-                key=lambda k: self._cache_timestamps[k]
+                self._cache_timestamps.keys(), key=lambda k: self._cache_timestamps[k]
             )[:100]
 
             for old_url in oldest_urls:
@@ -545,7 +583,7 @@ class ContentBlocker:
                 "url": url,
                 "reason": result.reason.value,
                 "matched_rule": result.matched_rule,
-                "details": result.details
+                "details": result.details,
             }
 
             with open(self.audit_file, "a", encoding="utf-8") as f:
@@ -560,10 +598,12 @@ class ContentBlocker:
             rules_data = {
                 "domains": {k: asdict(v) for k, v in self._domain_rules.items()},
                 "keywords": {k: asdict(v) for k, v in self._keyword_rules.items()},
-                "patterns": {k: asdict(rule) for k, (_, rule) in self._pattern_rules.items()},
+                "patterns": {
+                    k: asdict(rule) for k, (_, rule) in self._pattern_rules.items()
+                },
                 "whitelist": list(self._whitelist),
                 "version": "2.0",
-                "last_updated": datetime.now().isoformat()
+                "last_updated": datetime.now().isoformat(),
             }
 
             # Atomic write with backup

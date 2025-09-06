@@ -79,7 +79,9 @@ class ActivityLogger:
             f"BLOCKED_CONTENT - URL: {url}, Reason: {reason}", level="warning"
         )
 
-    def log_error(self, error_message: str, context: str = "", file_path: str = "") -> None:
+    def log_error(
+        self, error_message: str, context: str = "", file_path: str = ""
+    ) -> None:
         """Log error events with optional context and file path."""
         message = f"ERROR - {error_message}"
         if context:

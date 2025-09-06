@@ -5,12 +5,20 @@ from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
 
-from PyQt6.QtCore import QThread, pyqtSignal, QMutex, QMutexLocker, QWaitCondition, QTimer
+from PyQt6.QtCore import (
+    QThread,
+    pyqtSignal,
+    QMutex,
+    QMutexLocker,
+    QWaitCondition,
+    QTimer,
+)
 from Core.downloader import Downloader
 
 
 class DownloadStatus(Enum):
     """Download status enumeration."""
+
     PENDING = "pending"
     DOWNLOADING = "downloading"
     PAUSED = "paused"
@@ -22,6 +30,7 @@ class DownloadStatus(Enum):
 @dataclass
 class DownloadProgress:
     """Data class for download progress information."""
+
     status: DownloadStatus
     progress: float = 0.0
     speed: float = 0.0
@@ -40,7 +49,7 @@ class DownloadProgress:
             "downloaded_bytes": self.downloaded_bytes,
             "total_bytes": self.total_bytes,
             "filename": self.filename,
-            "error_message": self.error_message
+            "error_message": self.error_message,
         }
 
 
@@ -102,7 +111,7 @@ class DownloadThread(QThread):
                 self.url,
                 self.output_path,
                 self.config_options,
-                progress_callback=self._progress_message_callback
+                progress_callback=self._progress_message_callback,
             )
 
             if self._is_cancelled:
@@ -121,7 +130,9 @@ class DownloadThread(QThread):
                 self.download_completed.emit(True, completion_message, file_paths)
             else:
                 self._current_progress.status = DownloadStatus.FAILED
-                self._current_progress.error_message = "Download failed - no files were downloaded"
+                self._current_progress.error_message = (
+                    "Download failed - no files were downloaded"
+                )
                 self.progress_updated.emit(self._current_progress)
                 self.download_completed.emit(False, "Download failed", [])
 
@@ -170,7 +181,7 @@ class DownloadThread(QThread):
             "status": self._current_progress.status.value,
             "progress": self._current_progress.to_dict(),
             "elapsed_time": elapsed_time,
-            "downloaded_files": self._downloaded_files.copy()
+            "downloaded_files": self._downloaded_files.copy(),
         }
 
     def _validate_inputs(self) -> None:
@@ -184,7 +195,9 @@ class DownloadThread(QThread):
         # Check if output path is writable
         output_dir = Path(self.output_path)
         if output_dir.exists() and not os.access(output_dir, os.W_OK):
-            raise DownloadStorageError(f"Output directory is not writable: {output_dir}")
+            raise DownloadStorageError(
+                f"Output directory is not writable: {output_dir}"
+            )
 
     def _setup_output_directory(self) -> None:
         """Setup and validate output directory."""
@@ -247,7 +260,7 @@ class DownloadThread(QThread):
             eta=eta,
             downloaded_bytes=downloaded_bytes,
             total_bytes=total_bytes,
-            filename=os.path.basename(filename) if filename else ""
+            filename=os.path.basename(filename) if filename else "",
         )
 
         self.progress_updated.emit(self._current_progress)
@@ -323,7 +336,9 @@ class DownloadManager(QThread):
     all_downloads_completed = pyqtSignal()
     manager_status_changed = pyqtSignal(str)  # status message
     download_error = pyqtSignal(str, str)  # download_id, error_message
-    download_finished = pyqtSignal(str, bool, str, list)  # download_id, success, message, file_paths
+    download_finished = pyqtSignal(
+        str, bool, str, list
+    )  # download_id, success, message, file_paths
 
     def __init__(self, max_concurrent_downloads: int = 3):
         super().__init__()
@@ -341,7 +356,9 @@ class DownloadManager(QThread):
         self._stats_timer.timeout.connect(self._emit_queue_stats)
         self._stats_timer.start(2000)  # Update every 2 seconds
 
-    def add_download(self, url: str, output_path: str, config_options: Dict[str, Any]) -> str:
+    def add_download(
+        self, url: str, output_path: str, config_options: Dict[str, Any]
+    ) -> str:
         """Add a new download to the queue."""
         with QMutexLocker(self._mutex):
             download_thread = DownloadThread(url, output_path, config_options)
@@ -453,7 +470,7 @@ class DownloadManager(QThread):
         return {
             "active": len(self._active_downloads),
             "queued": len(self._download_queue),
-            "completed": len(self._completed_downloads)
+            "completed": len(self._completed_downloads),
         }
 
     def get_all_downloads_info(self) -> List[Dict[str, Any]]:
@@ -521,15 +538,23 @@ class DownloadManager(QThread):
                 self._completed_downloads.append(download_id)
 
             # Start new downloads if slots available
-            available_slots = self.max_concurrent_downloads - len(self._active_downloads)
+            available_slots = self.max_concurrent_downloads - len(
+                self._active_downloads
+            )
             for _ in range(min(available_slots, len(self._download_queue))):
                 if self._download_queue:
                     download_thread = self._download_queue.pop(0)
-                    self._active_downloads[download_thread.download_id] = download_thread
+                    self._active_downloads[download_thread.download_id] = (
+                        download_thread
+                    )
                     download_thread.start()
 
             # Check if all downloads are completed
-            if not self._active_downloads and not self._download_queue and self._completed_downloads:
+            if (
+                not self._active_downloads
+                and not self._download_queue
+                and self._completed_downloads
+            ):
                 self.all_downloads_completed.emit()
 
             # Stop manager if no active downloads or queue
@@ -540,10 +565,12 @@ class DownloadManager(QThread):
         """Handle individual download thread started."""
         self.download_started.emit(url)
 
-    def _on_download_completed(self, success: bool, message: str, file_paths: List[str]) -> None:
+    def _on_download_completed(
+        self, success: bool, message: str, file_paths: List[str]
+    ) -> None:
         """Handle download completion."""
         sender_thread = self.sender()
-        if hasattr(sender_thread, 'download_id'):
+        if hasattr(sender_thread, "download_id"):
             download_id = sender_thread.download_id
             self.download_completed.emit(success, message, file_paths)
             self.download_finished.emit(download_id, success, message, file_paths)
@@ -551,14 +578,14 @@ class DownloadManager(QThread):
     def _on_download_cancelled(self) -> None:
         """Handle download cancellation."""
         sender_thread = self.sender()
-        if hasattr(sender_thread, 'download_id'):
+        if hasattr(sender_thread, "download_id"):
             download_id = sender_thread.download_id
             self.download_cancelled.emit(download_id)
 
     def _on_download_error(self, error_type: str, error_message: str) -> None:
         """Handle download errors."""
         sender_thread = self.sender()
-        if hasattr(sender_thread, 'download_id'):
+        if hasattr(sender_thread, "download_id"):
             download_id = sender_thread.download_id
             self.download_failed.emit(download_id, error_message)
             self.download_error.emit(download_id, error_message)
@@ -566,7 +593,7 @@ class DownloadManager(QThread):
     def _on_progress_updated(self, progress: DownloadProgress) -> None:
         """Handle progress updates from download threads."""
         sender_thread = self.sender()
-        if hasattr(sender_thread, 'download_id'):
+        if hasattr(sender_thread, "download_id"):
             download_id = sender_thread.download_id
             progress_info = progress.to_dict()
             self.download_progress.emit(download_id, progress_info)
@@ -578,7 +605,9 @@ class DownloadManager(QThread):
             "queued_downloads": len(self._download_queue),
             "completed_downloads": len(self._completed_downloads),
             "max_concurrent": self.max_concurrent_downloads,
-            "total_downloads": len(self._active_downloads) + len(self._download_queue) + len(self._completed_downloads)
+            "total_downloads": len(self._active_downloads)
+            + len(self._download_queue)
+            + len(self._completed_downloads),
         }
         self.queue_status_changed.emit(stats)
 
@@ -601,24 +630,29 @@ class DownloadManager(QThread):
         self._stats_timer.stop()
         self.manager_status_changed.emit("stopped")
 
+
 # Custom exceptions for better error handling
 class DownloadError(Exception):
     """Base exception for download errors."""
+
     pass
 
 
 class DownloadValidationError(DownloadError):
     """Exception for input validation errors."""
+
     pass
 
 
 class DownloadNetworkError(DownloadError):
     """Exception for network-related errors."""
+
     pass
 
 
 class DownloadStorageError(DownloadError):
     """Exception for storage-related errors."""
+
     pass
 
 

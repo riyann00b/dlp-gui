@@ -11,6 +11,7 @@ from dataclasses import dataclass
 @dataclass
 class RecentItem:
     """Data class for recent download items with metadata."""
+
     file_path: str
     download_time: str
     url: str = ""
@@ -23,17 +24,17 @@ class RecentItem:
             "download_time": self.download_time,
             "url": self.url,
             "file_size": self.file_size,
-            "format_type": self.format_type
+            "format_type": self.format_type,
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'RecentItem':
+    def from_dict(cls, data: Dict[str, Any]) -> "RecentItem":
         return cls(
             file_path=data.get("file_path", ""),
             download_time=data.get("download_time", ""),
             url=data.get("url", ""),
             file_size=data.get("file_size", 0),
-            format_type=data.get("format_type", "")
+            format_type=data.get("format_type", ""),
         )
 
 
@@ -104,7 +105,7 @@ class RecentManager:
                         download_time=datetime.now().isoformat(),
                         url="",
                         file_size=self._get_file_size(file_path),
-                        format_type="unknown"
+                        format_type="unknown",
                     )
                     migrated_items.append(item.to_dict())
 
@@ -160,7 +161,9 @@ class RecentManager:
                         if Path(item.file_path).exists():
                             items.append(item)
                         else:
-                            self.logger.debug(f"Removed missing file from recents: {item.file_path}")
+                            self.logger.debug(
+                                f"Removed missing file from recents: {item.file_path}"
+                            )
                     except (TypeError, KeyError) as e:
                         self.logger.warning(f"Skipping invalid recent item: {e}")
 
@@ -195,7 +198,9 @@ class RecentManager:
 
                 # Validate file exists
                 if not Path(file_path).exists():
-                    self.logger.warning(f"Attempted to add non-existent file: {file_path}")
+                    self.logger.warning(
+                        f"Attempted to add non-existent file: {file_path}"
+                    )
                     return
 
                 items = self.load()
@@ -209,14 +214,14 @@ class RecentManager:
                     download_time=datetime.now().isoformat(),
                     url=url,
                     file_size=self._get_file_size(file_path),
-                    format_type=format_type
+                    format_type=format_type,
                 )
 
                 # Add to beginning
                 items.insert(0, new_item)
 
                 # Trim to max items
-                items = items[:self.max_items]
+                items = items[: self.max_items]
 
                 # Save
                 self._save_items([item.to_dict() for item in items])
@@ -225,7 +230,9 @@ class RecentManager:
             except Exception as e:
                 self.logger.error(f"Failed to add recent download: {e}")
 
-    def add_download(self, file_path: str, url: str = "", format_type: str = "") -> None:
+    def add_download(
+        self, file_path: str, url: str = "", format_type: str = ""
+    ) -> None:
         """Add a recent download - alias for add()."""
         self.add(file_path, url, format_type)
 
@@ -322,7 +329,7 @@ class RecentManager:
                     "total_size_mb": 0,
                     "format_breakdown": {},
                     "oldest_download": None,
-                    "newest_download": None
+                    "newest_download": None,
                 }
 
             format_counts = {}
@@ -330,14 +337,16 @@ class RecentManager:
                 fmt = item.format_type or "unknown"
                 format_counts[fmt] = format_counts.get(fmt, 0) + 1
 
-            download_times = [item.download_time for item in items if item.download_time]
+            download_times = [
+                item.download_time for item in items if item.download_time
+            ]
 
             return {
                 "total_downloads": len(items),
                 "total_size_mb": round(self.get_total_size() / (1024 * 1024), 2),
                 "format_breakdown": format_counts,
                 "oldest_download": min(download_times) if download_times else None,
-                "newest_download": max(download_times) if download_times else None
+                "newest_download": max(download_times) if download_times else None,
             }
 
         except Exception as e:
@@ -356,7 +365,9 @@ class RecentManager:
                 if len(valid_items) < original_count:
                     self._save_items([item.to_dict() for item in valid_items])
                     removed_count = original_count - len(valid_items)
-                    self.logger.info(f"Cleaned up {removed_count} missing files from recents")
+                    self.logger.info(
+                        f"Cleaned up {removed_count} missing files from recents"
+                    )
                     return removed_count
 
                 return 0
@@ -370,7 +381,9 @@ class RecentManager:
         try:
             items = self.load()
             with open(export_path, "w", encoding="utf-8") as f:
-                json.dump([item.to_dict() for item in items], f, indent=2, ensure_ascii=False)
+                json.dump(
+                    [item.to_dict() for item in items], f, indent=2, ensure_ascii=False
+                )
 
             self.logger.info(f"Exported {len(items)} items to {export_path}")
             return True
@@ -404,9 +417,9 @@ class RecentManager:
 
                 # Sort by download time (newest first) and trim
                 existing_items.sort(key=lambda x: x.download_time, reverse=True)
-                items_to_save = existing_items[:self.max_items]
+                items_to_save = existing_items[: self.max_items]
             else:
-                items_to_save = imported_items[:self.max_items]
+                items_to_save = imported_items[: self.max_items]
 
             self._save_items([item.to_dict() for item in items_to_save])
             self.logger.info(f"Imported {len(imported_items)} items from {import_path}")
@@ -415,6 +428,7 @@ class RecentManager:
         except Exception as e:
             self.logger.error(f"Failed to import recent downloads: {e}")
             return False
+
 
 class RecentFoldersManager:
     def __init__(self, max_items=10):
@@ -426,7 +440,7 @@ class RecentFoldersManager:
         if folder_path in self.recent_folders:
             self.recent_folders.remove(folder_path)
         self.recent_folders.insert(0, folder_path)
-        self.recent_folders = self.recent_folders[:self.max_items]
+        self.recent_folders = self.recent_folders[: self.max_items]
 
     def get_recent_folders(self) -> List[str]:
         return self.recent_folders
