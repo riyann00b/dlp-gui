@@ -1,0 +1,10 @@
+yt-dlp==2025.8.27
+PyQt6==6.9.1
+pyqtdarktheme==2.1.0
+
+ruff==0.12.12
+pytest>=7.0.0
+black>=23.0.0
+mypy>=1.0.0
+pyinstaller==6.15.0
+pyinstaller-hooks-contrib==2025.8

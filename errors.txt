@@ -1,0 +1,27 @@
+uv run ruff check --fix
+All checks passed!
+
+uv run mypy .
+Core/recent.py:88: error: Module has no attribute "JSONEncodeError"; maybe "JSONDecodeError" or "JSONEncoder"?  [attr-defined]
+Core/recent.py:140: error: Module has no attribute "JSONEncodeError"; maybe "JSONDecodeError" or "JSONEncoder"?  [attr-defined]
+Core/recent.py:328: error: Need type annotation for "format_counts" (hint: "format_counts: dict[<type>, <type>] = ...")  [var-annotated]
+Core/logger.py:8: error: Incompatible default for argument "log_file" (default has type "None", argument has type "str")  [assignment]
+Core/logger.py:8: note: PEP 484 prohibits implicit Optional. Accordingly, mypy has changed its default to no_implicit_optional=True
+Core/logger.py:8: note: Use https://github.com/hauntsaninja/no_implicit_optional to automatically upgrade your codebase
+Core/logger.py:133: error: Dict entry 0 has incompatible type "str": "str"; expected "str": "int"  [dict-item]
+Core/blocker.py:477: error: Argument 1 to "list" has incompatible type "set[str]"; expected "Iterable[dict[Any, Any]]"  [arg-type]
+Core/blocker.py:490: error: Dict entry 5 has incompatible type "str": "float"; expected "str": "int"  [dict-item]
+Core/downloader.py:2: error: Skipping analyzing "yt_dlp": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+Core/downloader.py:2: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+Core/threads.py:86: error: Incompatible types in assignment (expression has type "float", variable has type "None")  [assignment]
+Core/threads.py:226: error: Incompatible types in assignment (expression has type "float", variable has type "int")  [assignment]
+Core/threads.py:547: error: Item "None" of "QObject | None" has no attribute "download_id"  [union-attr]
+Core/threads.py:555: error: Item "None" of "QObject | None" has no attribute "download_id"  [union-attr]
+Core/threads.py:562: error: Item "None" of "QObject | None" has no attribute "download_id"  [union-attr]
+Core/threads.py:570: error: Item "None" of "QObject | None" has no attribute "download_id"  [union-attr]
+Ui/main_window.py:623: error: Skipping analyzing "qdarktheme": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+Ui/main_window.py:1041: error: Argument 1 of "closeEvent" is incompatible with supertype "PyQt6.QtWidgets.QWidget"; supertype defines the argument type as "QCloseEvent | None"  [override]
+Ui/main_window.py:1041: note: This violates the Liskov substitution principle
+Ui/main_window.py:1041: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
+app.py:6: error: Skipping analyzing "qdarktheme": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+Found 17 errors in 7 files (checked 9 source files)
