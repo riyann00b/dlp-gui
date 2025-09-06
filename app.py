@@ -1,5 +1,4 @@
 import sys
-import os
 from pathlib import Path
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import QApplication, QMessageBox
@@ -41,8 +40,6 @@ def setup_application():
             custom_colors={
                 "primary": "#7aa2f7",
                 "background": "#1a1b26",
-                "surface": "#24283b",
-                "accent": "#bb9af7"
             },
             corner_shape="rounded",
             additional_qss="""
@@ -121,36 +118,19 @@ def check_dependencies():
             missing_deps.append(module)
 
     if missing_deps:
-        error_msg = f"Missing required dependencies:\n" + "\n".join(f"- {dep}" for dep in missing_deps)
+        error_msg = "Missing required dependencies:\n" + "\n".join(f"- {dep}" for dep in missing_deps)
         error_msg += "\n\nPlease install them using:\npip install " + " ".join(missing_deps)
 
         print(error_msg)
 
         # Show GUI error if PyQt6 is available
         if 'PyQt6' not in missing_deps:
-            app = QApplication(sys.argv)
+            QApplication(sys.argv)
             QMessageBox.critical(None, "Missing Dependencies", error_msg)
 
         return False
 
     return True
-
-
-def setup_directories():
-    """Setup required application directories."""
-    app_dirs = [
-        project_root / "logs",
-        project_root / "cache",
-        project_root / "downloads",
-        project_root / "temp"
-    ]
-
-    for directory in app_dirs:
-        try:
-            directory.mkdir(exist_ok=True)
-        except Exception as e:
-            print(f"Failed to create directory {directory}: {e}")
-
 
 def main():
     """Main application entry point."""
@@ -159,9 +139,6 @@ def main():
     # Check dependencies first
     if not check_dependencies():
         sys.exit(1)
-
-    # Setup application directories
-    setup_directories()
 
     # Create application
     try:
@@ -200,7 +177,7 @@ def main():
         try:
             QMessageBox.critical(None, "Startup Error",
                                f"{error_msg}\n\nPlease check the console for more details.")
-        except:
+        except Exception:
             pass
 
         sys.exit(1)

@@ -1,12 +1,11 @@
 import logging
 import os
 import platform
-from datetime import datetime
 from typing import List, Dict, Union
 
 
 class ActivityLogger:
-    def __init__(self, app_name: str = "yt-dlp-gui", log_file: str = None):
+    def __init__(self, app_name: str = "dlp-gui", log_file: str = None):
         self.app_name = app_name
         self.log_file = log_file or self._get_default_log_path()
         self.setup_logger()
@@ -124,9 +123,9 @@ class ActivityLogger:
 
             return {
                 "total_entries": len(lines),
-                "downloads": sum("DOWNLOAD_START" in l for l in lines),
-                "errors": sum("ERROR" in l for l in lines),
-                "blocked": sum("BLOCKED_CONTENT" in l for l in lines),
+                "downloads": sum("DOWNLOAD_START" in line for line in lines),
+                "errors": sum("ERROR" in line for line in lines),
+                "blocked": sum("BLOCKED_CONTENT" in line for line in lines),
             }
 
         except Exception as e:

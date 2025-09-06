@@ -45,9 +45,9 @@ class DownloadProgress:
 
 
 class DownloadThread(QThread):
-    """Enhanced download thread with pause/resume, cancellation, and detailed progress."""
+    """download thread with pause/resume, cancellation, and detailed progress."""
 
-    # Enhanced signals
+    # signals
     progress_updated = pyqtSignal(DownloadProgress)
     download_started = pyqtSignal(str)  # URL
     download_completed = pyqtSignal(bool, str, list)  # success, message, file_paths
@@ -195,7 +195,7 @@ class DownloadThread(QThread):
             raise DownloadStorageError(f"Failed to create output directory: {e}")
 
     def _progress_callback(self, progress_data: Dict[str, Any]) -> None:
-        """Enhanced progress callback for yt-dlp."""
+        """progress callback for yt-dlp."""
         current_time = time.time()
 
         # Throttle updates to avoid overwhelming the UI
