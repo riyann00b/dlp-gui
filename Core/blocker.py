@@ -4,7 +4,7 @@ import json
 import threading
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
-from typing import List, Dict, Set, Optional, Tuple, Any, Callable
+from typing import List, Dict, Set, Optional, Tuple, Any
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from enum import Enum
